@@ -1,0 +1,8 @@
+from PIL import Image, ImageDraw
+
+img = Image.new('RGBA', (64, 64), (255, 255, 0))
+draw = ImageDraw.Draw(img)
+
+draw.ellipse((10, 10, 54,54), fill=(0, 0, 0, 255))
+
+img.save("favicon", format="ICO")

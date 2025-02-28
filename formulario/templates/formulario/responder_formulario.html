@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responder Formulário</title>
+</head>
+<body>
+    <h1>Responder ao Formulário: {{ formulario.nome }}</h1>
+    <form method="post" action="{% url 'responder_formulario' formulario.id %}">
+        {% csrf_token %}
+        <textarea name="resposta" placeholder="Digite sua resposta aqui..." required></textarea>
+        <button type="submit">Enviar Resposta</button>
+    </form>
+</body>
+</html>

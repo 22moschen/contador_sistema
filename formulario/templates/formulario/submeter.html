@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submeter Formulário</title>
+</head>
+<body>
+    <h1>Submeter Formulário</h1>
+    <form id="formulario" method="post">
+        {% csrf_token %}
+        <div>
+            <label for="empresa_id">ID da Empresa:</label>
+            <input type="text" id="empresa_id" name="empresa_id" required>
+
+        </div>
+        <div>
+            <label for="perguntas_respostas">Perguntas e Respostas (JSON):</label>
+            <textarea id="perguntas_respostas" name="perguntas_respostas" required></textarea>
+
+        </div>
+        <div>
+            <button type="submit">Submeter</button>
+        </div>
+    </form> 
+
+    <script>
+        document.getElementById("formulario").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const FormData = new FormData(this);
+
+            fetch('/formulario/submeter/', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                // Inclui o token CSRF no cabeçalho
+                }
+            })
+
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+
+            .catch(error => {
+                console.error('Erro:', error);
+                });
+            });
+
+    </script>
+</body>
+</html>

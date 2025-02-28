@@ -1,0 +1,46 @@
+<!-- formulario.html -->
+<form id="swotForm" method="POST" action="/submeter_swot/">
+    {% csrf_token %}
+    <label for="forca">Forças:</label>
+    <textarea id="forca" name="forca" required></textarea>
+    
+    <label for="fraqueza">Fraquezas:</label>
+    <textarea id="fraqueza" name="fraqueza" required></textarea>
+    
+    <label for="oportunidade">Oportunidades:</label>
+    <textarea id="oportunidade" name="oportunidade" required></textarea>
+    
+    <label for="ameaça">Ameaças:</label>
+    <textarea id="ameaça" name="ameaça" required></textarea>
+    
+    <button type="submit">Enviar</button>
+</form>
+
+<script>
+document.getElementById('swotForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(this);
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    try {
+        const response = await fetch('/submeter_swot/', {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            body: formData
+        });
+
+        if (response.ok) {
+            alert('Formulário enviado com sucesso!');
+            this.reset();
+        } else {
+            alert('Erro ao enviar o formulário.');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro na solicitação.');
+    }
+});
+</script>

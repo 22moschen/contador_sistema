@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário SWOT</title>
+</head>
+<body>
+    <h1>Formulário de Análise SWOT</h1>
+    <form id="swot_form" method="post" action="{% url 'submeter_swot_formulario' %}">
+        {% csrf_token %}
+        <label for="cnpj">CNPJ:</label>
+        <input type="text" id="cnpj" name="cnpj" required>
+        <br>
+        <label for="forcas">Forças:</label>
+        <textarea id="forcas" name="forcas" required></textarea>
+        <br>
+        <label for="fraquezas">Fraquezas:</label>
+        <textarea id="fraquezas" name="fraquezas" required></textarea>
+        <br>
+        <label for="oportunidades">Oportunidades:</label>
+        <textarea id="oportunidades" name="oportunidades" required></textarea>
+        <br>
+        <label for="ameacas">Ameaças:</label>
+        <textarea id="ameacas" name="ameacas" required></textarea>
+        <br>
+        <button type="submit">Submeter Análise SWOT</button>
+    </form>
+</body>
+</html>

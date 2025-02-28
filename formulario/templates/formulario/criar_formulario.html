@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Formulário</title>
+</head>
+<body>
+    <h1>Criar Novo Formulário</h1>
+    <form method="post" action="{% url 'criar_formulario' %}">
+        {% csrf_token %}
+        <input type="text" name="nome_formulario" placeholder="Nome do Formulário" required>
+        <button type="submit">Criar Formulário</button>
+    </form>
+</body>
+</html>
