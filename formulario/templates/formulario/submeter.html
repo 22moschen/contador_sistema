@@ -6,8 +6,17 @@
     <title>Submeter Formulário</title>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'criar_formulario' %}">Criar Formulário</a></li>
+            <li><a href="{% url 'swot_form' %}">Análise SWOT</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
     <h1>Submeter Formulário</h1>
-    <form id="formulario" method="post">
+    <form id="formulario" method="post"> 
+
         {% csrf_token %}
         <div>
             <label for="empresa_id">ID da Empresa:</label>
@@ -49,5 +58,6 @@
             });
 
     </script>
+    </form> 
 </body>
 </html>

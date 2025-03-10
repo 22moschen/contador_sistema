@@ -10,15 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-
-
-
-
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -31,9 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -44,8 +37,8 @@ INSTALLED_APPS = [
     'formulario',
     'rest_framework',
     'corsheaders',  # Adicionando corsheaders
+    'rest_framework_simplejwt',  # Adicionando Simple JWT para autenticação
 ]
-
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Adicionando corsheaders middleware
@@ -58,14 +51,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
 ROOT_URLCONF = 'contador_sistema.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [BASE_DIR / 'formulario/templates'], 
-
+        'DIRS': [BASE_DIR / 'templates'],  # Adicione esta linha para suportar templates fora dos apps
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,80 +69,9 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'contador_sistema.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
-
-
-# CORS settings
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # URL do front-end React
-]
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.1/howto/static-files/
-
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Define um caminho para os arquivos coletados
-
-# Adicionando LOGOUT_REDIRECT_URL
-LOGOUT_REDIRECT_URL = '/login/'  # Redireciona para a página de login após o logout
-
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Define um caminho para os arquivos coletados
-
-# Adicionando LOGOUT_REDIRECT_URL
-LOGOUT_REDIRECT_URL = '/login/'  # Redireciona para a página de login após o logout
-
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Define um caminho para os arquivos coletados
-
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Define um caminho para os arquivos coletados
-
-
-
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+LOGIN_URL = '/login/'  # Rota personalizada para sua página de login
+LOGIN_REDIRECT_URL = '/'  # Rota para redirecionar após login

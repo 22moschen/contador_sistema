@@ -1,36 +1,58 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
-    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
 
-</head>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url("{% static 'imagens/bg.jpeg' %}");
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+    
+    <link rel="stylesheet" href="{% static 'css/login.css' %}"></head>
 <body>
     <div class="container">
-        <h2>Login</h2>
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
-        <form method="POST">
+        <form method="post">
             {% csrf_token %}
-            <div>
-                <label for="username">Usuário:</label>
-                <input type="text" id="username" name="username" required>
+            <h1>Acesse o sistema</h1>
+            <div class="input-field">
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    placeholder="E-mail" 
+                    required>
+                <i class="icon fa fa-user"></i>
             </div>
-            <div>
-                <label for="password">Senha:</label>
-                <input type="password" id="password" name="password" required>
+            <div class="input-field">
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    placeholder="Senha" 
+                    required>
+                <i class="icon fa fa-lock"></i>
             </div>
-            <button type="submit">Entrar</button>
+            <div class="recall-forget">
+                <label>
+                    <input type="checkbox"> Lembre de mim
+                </label>
+                <a href="#">Esqueceu sua senha?</a>
+            </div>
+            <button type="submit">Login</button>
+            <div class="signup-link">
+                <p>Não tem uma conta? <a href="#">Registrar</a></p>
+            </div>
         </form>
-    <form action="{% url 'logout' %}" method="post">
-        {% csrf_token %}
-        <button type="submit">Logout</button>
-    </form>
-</div>
+    </div>
 </body>
 </html>

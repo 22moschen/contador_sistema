@@ -6,11 +6,21 @@
     <title>Criar Formulário</title>
 </head>
 <body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+            <li><a href="{% url 'criar_formulario' %}">Criar Formulário</a></li>
+            <li><a href="{% url 'swot_form' %}">Análise SWOT</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
     <h1>Criar Novo Formulário</h1>
-    <form method="post" action="{% url 'criar_formulario' %}">
+    <form method="post" action="{% url 'criar_formulario' %}"> 
+
         {% csrf_token %}
         <input type="text" name="nome_formulario" placeholder="Nome do Formulário" required>
         <button type="submit">Criar Formulário</button>
+    </form>
     </form>
 </body>
 </html>

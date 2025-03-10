@@ -16,8 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_simplejwt.views import TokenObtainPairView  # Importando a view para obter o token
+from formulario.views import dashboard, login_view  # Importando a view do dashboard e a view de login
+
 
 urlpatterns = [
-    path('', include('formulario.urls')),  # Servindo a aplicação React na URL raiz
     path('admin/', admin.site.urls),
+    path('login/', login_view, name='login'),  # Adicionando a URL de login
+    path('dashboard/', dashboard, name='dashboard'),  # URL do dashboard
+
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),  # Endpoint para obter o token JWT
+    path('', include('formulario.urls')),  # Servindo a aplicação React na URL raiz
 ]

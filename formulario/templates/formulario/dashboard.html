@@ -1,0 +1,154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema Contábil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+    <!-- Barra de Navegação -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <img src="{% static 'img/logo.png' %}" alt="Logo" width="40" class="d-inline-block align-text-top">
+                ContadorPWA
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'criar_formulario' %}">
+                            <i class="fas fa-plus-circle me-1"></i>Novo Formulário
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'analise_swot' %}">
+                            <i class="fas fa-chart-pie me-1"></i>Análise SWOT
+                        </a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center">
+                    <span class="navbar-text me-3">Bem-vindo, {{ request.user.username }}</span>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-light">
+                        <i class="fas fa-sign-out-alt me-1"></i>Sair
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <div class="container mt-4">
+        <!-- Alertas -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Cards Estatísticos -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="stat-card">
+                    <h5><i class="fas fa-file-alt me-2"></i>Formulários Ativos</h5>
+                    <p class="display-4">{{ total_formularios }}</p>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><i class="fas fa-chart-line me-2"></i>Atividade Recente</h5>
+                        <div id="respostasChart" class="chart-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Formulários -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="fas fa-list-alt me-2"></i>Formulários Recentes</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Criação</th>
+                                <th>Respostas</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for formulario in formularios %}
+                            <tr>
+                                <td>{{ formulario.titulo }}</td>
+                                <td>{{ formulario.data_criacao|date:"d/m/Y H:i" }}</td>
+                                <td>{{ formulario.total_respostas }}</td>
+                                <td>
+                                    <span class="badge bg-success">Ativo</span>
+                                </td>
+                                <td>
+                                    <a href="{% url 'detalhes_formulario' formulario.id %}" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye me-1"></i>Detalhes
+                                    </a>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">Nenhum formulário encontrado</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js"></script>
+    
+    <!-- Dados para Gráficos -->
+    {{ contagens_respostas|json_script:"contagens-respostas" }}
+    {{ datas_respostas|json_script:"datas-respostas" }}
+
+    <!-- Configuração do Gráfico -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const contagens = JSON.parse(document.getElementById('contagens-respostas').textContent);
+            const datas = JSON.parse(document.getElementById('datas-respostas').textContent);
+
+            const trace = {
+                x: datas,
+                y: contagens,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: {shape: 'spline', width: 3},
+                marker: {size: 8}
+            };
+
+            const layout = {
+                title: 'Respostas nos Últimos 7 Dias',
+                xaxis: {title: 'Data'},
+                yaxis: {title: 'Número de Respostas'},
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)'
+            };
+
+            Plotly.newPlot('respostasChart', [trace], layout);
+        });
+    </script>
+</body>
+</html>

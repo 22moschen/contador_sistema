@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responder Formulário</title>
+    <title>Formulário SWOT</title>
 </head>
 <body>
     <nav>
@@ -14,12 +14,16 @@
             <li><a href="{% url 'logout' %}">Logout</a></li>
         </ul>
     </nav>
-    <h1>Responder ao Formulário: {{ formulario.nome }}</h1>
-    <form method="post" action="{% url 'responder_formulario' formulario.id %}"> 
+    <h1>Formulário SWOT</h1>
+    <form method="post">
 
         {% csrf_token %}
-        <textarea name="resposta" placeholder="Digite sua resposta aqui..." required></textarea>
-        <button type="submit">Enviar Resposta</button>
+        <!-- Add form fields for SWOT analysis here -->
+        <input type="text" name="strengths" placeholder="Forças">
+        <input type="text" name="weaknesses" placeholder="Fraquezas">
+        <input type="text" name="opportunities" placeholder="Oportunidades">
+        <input type="text" name="threats" placeholder="Ameaças">
+        <button type="submit">Submeter</button>
     </form>
     </form>
 </body>
