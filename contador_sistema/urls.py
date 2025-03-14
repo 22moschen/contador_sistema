@@ -21,7 +21,6 @@ from formulario.views import dashboard, login_view  # Importando a view do dashb
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('login/', login_view, name='login'),  # Adicionando a URL de login
     path('dashboard/', dashboard, name='dashboard'),  # URL do dashboard
 

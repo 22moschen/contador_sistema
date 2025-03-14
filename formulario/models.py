@@ -44,6 +44,7 @@ class Resposta(models.Model):
     pergunta = models.ForeignKey(Pergunta, on_delete=models.CASCADE)
     conteudo = models.TextField()
     data_resposta = models.DateTimeField(auto_now_add=True)
+    tipo = models.CharField(max_length=1, choices=[('F', 'Força'), ('O', 'Oportunidade'), ('D', 'Desafio'), ('A', 'Ameaça')])  # Adicione este campo se necessário
 
     class Meta:
         unique_together = ('formulario', 'pergunta')

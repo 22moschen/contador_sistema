@@ -3,12 +3,14 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Formulario, Pergunta, Resposta, SWOTResponse, RespostaFormulario
-from django.core.serializers import serialize
-from django.utils.safestring import mark_safe
+from django.contrib.auth.models import User
+from django.urls import reverse
+
 from django.db.models import Count
 from django.utils import timezone
 from datetime import timedelta
 from .forms import SWOTForm, PerguntaForm, RespostaForm
+
 
 @login_required
 def dashboard(request):
@@ -23,7 +25,7 @@ def dashboard(request):
 
     for date in date_range:
         count = Resposta.objects.filter(
-            Formulario__contador=request.user,
+            formulario__contador=request.user,
             data_resposta__date=date.date()
         ).count()
         contagens_respostas.append(count)
@@ -38,27 +40,49 @@ def dashboard(request):
 
     context = {
         'total_formularios': total_formularios,
-        'contagens_respostas': mark_safe(serialize('json', contagens_respostas)), 
-        'datas_respostas': mark_safe(serialize('json', datas_respostas)),
+        'contagens_respostas': contagens_respostas, 
+        'datas_respostas': datas_respostas,
         'formularios': formularios
     }
 
-    return render(request, 'dashboard.html', context)
+    return render(request, 'formulario/dashboard.html', context)
 
 def login_view(request):  # View para autenticação de usuários
+    next_url = request.GET.get('next', '') #captura o parâmetro 'next' da URL
+
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request, username=username, password=password)
-        if user is not None:
-            login(request, user)
-            return redirect('dashboard')
-        messages.error(request, 'Usuário ou senha inválidos.')  # Adicionando mensagem de erro
-    return render(request, 'formulario/login.html')  # Retorna a página de login
+        email = request.POST.get('username')
+        password = request.POST.get('password')
+        next_url = request.POST.get('next', '') #captura do formulário
+        try:
+            user = User.objects.get(email=email) # Obtenha o usuário pelo e-mail
+            auth_user = authenticate(
+                request, 
+                username=user.username,
+                password=password 
+            ) # Autenticação do usuário
+
+            if auth_user is not None:
+                login(request, auth_user) # Login do usuário
+                return redirect(next_url if next_url else reverse('dashboard'))
+            messages.error(request, 'Senha incorreta')
+        except Exception as e:
+            messages.error(request, f'Erro no login {str(e)}')
+    return render(request, 'formulario/login.html', {'next': next_url})
 
 def logout_view(request):
     logout(request)
-    return redirect('login')
+    return redirect(reverse('login') + '?next=' + request.GET.get('next', reverse('login')))
+
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        email = request.POST['email']
+        password = request.POST['password']
+        user = User.objects.create_user(username=username, email=email, password=password)
+        messages.success(request, 'Conta criada com sucesso! Você pode fazer login agora.')
+        return redirect('login')
+    return render(request, 'formulario/register_view.html')  
 
 @login_required
 def criar_formulario(request):
@@ -69,7 +93,8 @@ def criar_formulario(request):
             contador=request.user
         )
         return redirect('editar_formulario', formulario_id=formulario.id)
-    return render(request, 'formulario/criar_formulario.html')
+    formularios = Formulario.objects.filter(contador=request.user)
+    return render(request, 'formulario/criar_formulario.html', {'formularios': formularios})
 
 @login_required
 def editar_formulario(request, formulario_id):
@@ -84,18 +109,18 @@ def exibir_swot_form(request, formulario_id):
     formulario = get_object_or_404(Formulario, id=formulario_id)
     
     if request.method == 'POST':
-        form = SWOTForm(request.POST)
-        if form.is_valid():
-            SWOTResponse.objects.create(
-                formulario=formulario,
-                **form.cleaned_data
-            )
-            return redirect('detalhes_formulario', formulario_id=formulario.id)
-    
-    form = SWOTForm()
+        # Criar análise SWOT
+        SWOTResponse.objects.create(
+            formulario=formulario,
+            strengths=request.POST.get('strengths'),
+            weaknesses=request.POST.get('weaknesses'),
+            opportunities=request.POST.get('opportunities'),
+            threats=request.POST.get('threats')
+        )
+        messages.success(request, 'Análise SWOT salva com sucesso!')
+        return redirect('detalhes_formulario', formulario_id=formulario.id)
     
     return render(request, 'formulario/swot_form.html', {
-        'form': form,
         'formulario': formulario
     })
 
@@ -111,5 +136,26 @@ def compartilhar_formulario(request, formulario_id):
     formulario = get_object_or_404(Formulario, id=formulario_id, contador=request.user)
     # Implementar lógica de geração de link único
     return render(request, 'formulario/compartilhar.html', {
+        'formulario': formulario
+    })
+
+@login_required
+def analise_swot(request):
+    # Implemente a lógica de análise SWOT global aqui
+    swot_data = {
+        'forcas': Resposta.objects.filter(tipo='F').count(),
+        'fraquezas': Resposta.objects.filter(tipo='W').count(),
+        'oportunidades': Resposta.objects.filter(tipo='O').count(),
+        'ameacas': Resposta.objects.filter(tipo='A').count()
+    }
+    
+    return render(request, 'formulario/analise_swot.html', {
+        'swot_data': swot_data
+    })
+
+@login_required
+def detalhes_formulario(request, formulario_id):
+    formulario = get_object_or_404(Formulario, id=formulario_id, contador=request.user)
+    return render(request, 'formulario/detalhes_formulario.html', {
         'formulario': formulario
     })

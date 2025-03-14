@@ -73,5 +73,14 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-LOGIN_URL = '/login/'  # Rota personalizada para sua página de login
-LOGIN_REDIRECT_URL = '/'  # Rota para redirecionar após login
+LOGIN_URL = 'login'  # Nome da URL de login
+LOGIN_REDIRECT_URL = 'dashboard'  # Redirecionamento pós-login padrão
+LOGOUT_REDIRECT_URL = 'login'  # Redirecionamento pós-logout
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',  # Ou outro banco como 'django.db.backends.postgresql'
+        'NAME': BASE_DIR / 'db.sqlite3',         # Nome ou caminho do banco de dados
+    }
+}
